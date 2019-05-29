@@ -32,7 +32,11 @@ from evennia.settings_default import *
 ######################################################################
 
 # This is the name of your game. Make it catchy!
-SERVERNAME = "thedarknet2"
+SERVERNAME = "thedarknet"
+
+SSH_ENABLED = True
+SSH_PORTS = [4004]
+SSH_INTERFACES = ['0.0.0.0']
 
 
 ######################################################################
