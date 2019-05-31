@@ -13,7 +13,8 @@ import random
 from twisted.internet import reactor
 
 def debug(msg):
-    search.objects("loki")[0].msg(msg)
+    # search.objects("loki")[0].msg(msg)
+    pass
 def say_soon(location, msg):
     def say(location, msg):
         location.msg_contents(msg)
@@ -44,7 +45,7 @@ class AccountingLedger(Object):
         # only keep the last SIZE transactions
         if len(self.ndb.transactions) > AccountingLedger.SIZE:
             self.ndb.transactions = self.ndb.transactions[-1*AccountingLedger.SIZE:]
-        transaction.location.msg_contents("Transaction committed to the ledger")
+        transaction.location.msg_contents("Transaction #%d committed to the ledger"%(transaction.db.txid))
         transaction.delete()
 
     def return_appearance(self, looker):
@@ -54,11 +55,17 @@ class AccountingLedger(Object):
         return appearance.strip()
 
 class Transaction(Object):
-    def at_after_move(self, source_location):
+    def wait_to_commit(self):
         if hasattr(self, 'timeout') and self.timeout is not None:
             self.timeout.cancel()
         if self.location.is_typeclass(Accounting):
             self.timeout = reactor.callLater(self.location.COMMIT_TIME, self.location.commit, self)
+
+    def at_init(self):
+        self.wait_to_commit()
+
+    def at_after_move(self, source_location):
+        self.wait_to_commit()
 
     def return_appearance(self, looker):
         appearance = super(Transaction, self).return_appearance(looker)
@@ -86,8 +93,9 @@ class TransactionFactory(Script):
         tx = create.create_object(Transaction, key="transaction",
                          aliases=["transaction#%d"%(self.db.txid)],
                          attributes=[["txdetails", txdata], ["txid", self.db.txid]],
-                         location=room, home=room,
+                         location=None, home=room,
                          )
+        tx.move_to(room, quiet=True)
         room.msg_contents("A new transaction appeared (%d)"%(tx.db.txid))
         # debug("new tx "+tx.dbref)
 
@@ -140,13 +148,19 @@ class Worm(Object):
             debug("nowhere to go? "+str(randomized_exits))
 
     def at_after_move(self, source_location):
+        self.wait_to_move()
+        for obj in self.location.contents:
+            # debug("worm examining objects on arrival: "+str(obj))
+            self.nibble_transaction(obj)
+
+    def at_init(self):
+        self.wait_to_move()
+
+    def wait_to_move(self):
         if hasattr(self, 'timeout') and self.timeout is not None:
             self.timeout.cancel()
         delay = round(random.random()*15+15) # 15-30seconds
         self.timeout = reactor.callLater(delay, self.move_randomly)
-        for obj in self.location.contents:
-            # debug("worm examining objects on arrival: "+str(obj))
-            self.nibble_transaction(obj)
 
 class Bird(Object):
     def at_object_creation(self):
