@@ -17,6 +17,7 @@ Why is the MUD available before the boss fight? We recently discovered some left
 5. evennia migrate && evennia start (loki, no email, stormbringer)
 6. Open your browser to http://localhost:4001 or `ssh localhost -p 4004` or `telnet localhost 4000`
 7. Login as loki with password stormbringer
+8. batchcode bossfightzone   (this will take a few minutes with no output to execute)
 
 # Diving into Evennia
 
