@@ -105,7 +105,7 @@ if DEBUG:
 
 #CODE
 # Accounting Worm Puzzle
-from typeclasses.dn8bossfight.accounting import Accounting, AccountingLedger, Transaction, Worm, TransactionFactory
+from typeclasses.dn8bossfight.accounting import Accounting, AccountingLedger, Transaction, Worm, TransactionFactory, Bird
 rooms = [
     getroom(3,0),
     getroom(4,0),
@@ -141,12 +141,13 @@ worm = create.create_object(Worm, key="worm",
                             )
 worm.locks.add("get:false()")
 
+bird = create.create_object(Bird, key="bird", report_to=caller, location=getroom(0,0), home=getroom(0,0))
+
 
 #CODE
 # Cleanup the Zone
 if DEBUG:
-    script = search.scripts("AccountTransactionFactory")[0]
-    if script:
+    for script in search.scripts("AccountingTransactionFactory"):
         script.stop()
     if zone:
         for room in zone.contents:
