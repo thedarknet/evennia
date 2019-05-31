@@ -104,8 +104,50 @@ if DEBUG:
     pass
 
 #CODE
+# Accounting Worm Puzzle
+from typeclasses.dn8bossfight.accounting import Accounting, AccountingLedger, Transaction, Worm, TransactionFactory
+rooms = [
+    getroom(3,0),
+    getroom(4,0),
+    getroom(3,1),
+    getroom(4,1),
+]
+for room in rooms:
+    room.swap_typeclass(Accounting, clean_cmdsets=True, run_start_hooks='all')
+    room.name = "Accounting"
+    room.db.desc = "One of the accounting databases"
+    ledger = create.create_object(AccountingLedger, key="ledger",
+                                  aliases=["ledger"],
+                                  attributes=[["desc","An accounting ledger"]],
+                                  location=room, home=room,
+                                  report_to=caller,
+                                  )
+    # Ledger must stay here
+    ledger.locks.add("get:false()")
+
+# for i in range(10):
+#     create.create_object(Transaction, key="transaction",
+#                          aliases=["transaction#%d"%(i)],
+#                          attributes=[["txdetails", "+$10.%02d"%(i)]],
+#                          location=getroom(0,0), home=getroom(0,0),
+#                          report_to=caller
+#                          )
+
+create.create_script(TransactionFactory, key="AccountingTransactionFactory", report_to=caller, attributes=[["rooms",rooms]])
+
+worm = create.create_object(Worm, key="worm",
+                            location=getroom(3,0), home=getroom(3,0),
+                            report_to=caller
+                            )
+worm.locks.add("get:false()")
+
+
+#CODE
 # Cleanup the Zone
 if DEBUG:
+    script = search.scripts("AccountTransactionFactory")[0]
+    if script:
+        script.stop()
     if zone:
         for room in zone.contents:
             for item in room.contents:

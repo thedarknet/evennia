@@ -35,6 +35,12 @@ class Room(DefaultRoom):
                     continue
             break
 
+    def at_object_receive(self, obj, source_location):
+        super(Room, self).at_object_receive(obj, source_location)
+        for childobj in self.contents:
+            if hasattr(childobj, 'at_object_arrive'):
+                childobj.at_object_arrive(obj, source_location)
+
 class Zone(Room):
     def at_object_delete(self):
         ret = super(Zone, self).at_object_delete()
