@@ -11,9 +11,9 @@ Why is the MUD available before the boss fight? We recently discovered some left
 
 # Development Setup
 1. Install Docker
-2. docker pull evennia/evennia
-3. git clone git@github.com:thedarknet/evennia.git
-4. cd /path/to/evennia && git checkout dn8 && docker run -it --rm -p 4000:4000 -p 4001:4001 -p 4002:4002 -p 4004:4004 -p 4005:4005 --rm -v $PWD:/usr/src/game evennia/evennia
+2. git clone git@github.com:thedarknet/evennia.git
+3. cd evennia && git checkout last-python2.7 && docker build -t evennia/evennia:last-python2.7 .
+4. git checkout dn8 && docker run -it --rm -p 4000:4000 -p 4001:4001 -p 4002:4002 -p 4004:4004 -p 4005:4005 --rm -v $PWD:/usr/src/game evennia/evennia:last-python2.7
 5. evennia migrate && evennia start (loki, no email, stormbringer)
 6. Open your browser to http://localhost:4001 or `ssh localhost -p 4004` or `telnet localhost 4000`
 7. Login as loki with password stormbringer
