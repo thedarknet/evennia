@@ -35,7 +35,7 @@ else:
 #CODE
 # Create all the rooms
 # Coordinates  vy  >x
-SIZE=(5,5)
+SIZE=(10,11)
 rooms = dict()
 for x in range(SIZE[0]):
     for y in range(SIZE[1]):
@@ -82,7 +82,7 @@ if DEBUG:
 #CODE
 # Set up the Entrance room and link to Limbo
 from typeclasses.dn8bossfight.rooms import Entrance
-room = getroom(0,0)
+room = getroom(1,7)
 room.swap_typeclass(Entrance, clean_cmdsets=True, run_start_hooks='all')
 room.name = "The Grand Entrance Hall"
 room.db.desc = """
@@ -107,10 +107,10 @@ if DEBUG:
 # Accounting Worm Puzzle
 from typeclasses.dn8bossfight.accounting import Accounting, AccountingLedger, Transaction, Worm, TransactionFactory, Bird
 rooms = [
-    getroom(3,0),
-    getroom(4,0),
-    getroom(3,1),
-    getroom(4,1),
+    getroom(8,0),
+    getroom(9,0),
+    getroom(8,1),
+    getroom(9,1),
 ]
 for room in rooms:
     room.swap_typeclass(Accounting, clean_cmdsets=True, run_start_hooks='all')
