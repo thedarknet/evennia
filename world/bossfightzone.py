@@ -145,6 +145,25 @@ bird = create.create_object(Bird, key="bird", report_to=caller, location=getroom
 
 
 #CODE
+# Cryptochip theft and installation
+from typeclasses.dn8bossfight.cryptochip import Playtronics, AntiVirus
+
+room = getroom(1,1)
+room.swap_typeclass(Playtronics, clean_cmdsets=True, run_start_hooks='all')
+room.aliases.add("dn8bossfight#playtronics")
+room.name = "Playtronics HQ"
+room.db.desc = """
+You stand outside an office with a metal grill and a seamed opening.
+It looks like maybe a microphone and a drawer?
+""".strip()
+
+room = getroom(4,4)
+room.swap_typeclass(AntiVirus, clean_cmdsets=True, run_start_hooks='all')
+room.aliases.add("dn8bossfight#antivirus")
+room.name = "AntiVirus"
+room.db.desc = "You see several AntiBodies sitting behind a desk, wholly disinterested in you."
+
+#CODE
 # Cleanup the Zone
 if DEBUG:
     for script in search.scripts("AccountingTransactionFactory"):
