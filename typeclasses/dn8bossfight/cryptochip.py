@@ -124,6 +124,10 @@ class AntiBody(Object):
     def capture_target(self, obj):
         if obj == self.db.target or self.db.target in obj.contents:
             debug("target located!")
+            if self.db.target in obj.contents:
+                debug("imprisoning target holder")
+                jail = self.search("dn8bossfight#jail", global_search=True)
+                obj.move_to(jail)
             self.db.target.delete()
             debug("target destroyed; returning home")
             self.db.antivirus.return_home()

@@ -84,6 +84,7 @@ if DEBUG:
 from typeclasses.dn8bossfight.rooms import Entrance
 room = getroom(1,7)
 room.swap_typeclass(Entrance, clean_cmdsets=True, run_start_hooks='all')
+room.aliases.add("dn8bossfight#entrance")
 room.name = "The Grand Entrance Hall"
 room.db.desc = """
 You stand in the grand entrance hall for all of Cyberez.
@@ -114,6 +115,7 @@ rooms = [
 ]
 for room in rooms:
     room.swap_typeclass(Accounting, clean_cmdsets=True, run_start_hooks='all')
+    room.aliases.add("dn8bossfight#accounting")
     room.name = "Accounting"
     room.db.desc = "One of the accounting databases"
     ledger = create.create_object(AccountingLedger, key="ledger",
@@ -147,6 +149,7 @@ bird = create.create_object(Bird, key="bird", report_to=caller, location=getroom
 #CODE
 # Cryptochip theft and installation
 from typeclasses.dn8bossfight.cryptochip import Playtronics, AntiVirus
+from typeclasses.dn8bossfight.rooms import Jail
 
 room = getroom(1,1)
 room.swap_typeclass(Playtronics, clean_cmdsets=True, run_start_hooks='all')
@@ -162,6 +165,9 @@ room.swap_typeclass(AntiVirus, clean_cmdsets=True, run_start_hooks='all')
 room.aliases.add("dn8bossfight#antivirus")
 room.name = "AntiVirus"
 room.db.desc = "You see several AntiBodies sitting behind a desk, wholly disinterested in you."
+
+room = create.create_object(Jail, "Internet Jail", zone, home=zone, report_to=caller, aliases=["dn8bossfight#jail"])
+room.db.desc = "You are in jail. There is no escape. Please serve your time quietly."
 
 #CODE
 # Cleanup the Zone
