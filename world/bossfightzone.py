@@ -18,7 +18,7 @@ else:
 
 def getroom(x,y):
     for obj in zone.contents:
-        if obj.is_typeclass(Room, exact=False) and hasattr(obj.db, 'coordinates') and obj.db.coordinates[0] == x and obj.db.coordinates[1] == y:
+        if obj.is_typeclass(Room, exact=False) and obj.db.coordinates is not None and obj.db.coordinates[0] == x and obj.db.coordinates[1] == y:
             return obj
     return None
 
