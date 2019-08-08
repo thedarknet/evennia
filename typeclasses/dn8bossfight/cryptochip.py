@@ -108,6 +108,7 @@ class AntiVirus(Room):
         ]
         for typeclass in antibodyclasses:
             antibody = create.create_object(typeclass, "antibody", self, home=self, report_to=None)
+            # lol, antibodies allow `get` permission, so they can be picked up
             antibody.db.antivirus = self
             antibody.set_target(cryptochip)
             self.db.antibodies.append(antibody)
@@ -143,7 +144,9 @@ class AntiBody(Object):
 
     def move_callback(self):
         self.timeout = None
-        self.move()
+        # check to see if we are on the coordinate grid
+        if self.location.db.coordinates is not None:
+            self.move()
 
     def move(self):
         # Base behavior is to just pick a random exit
@@ -171,7 +174,7 @@ class AntiBody(Object):
     def wait_to_move(self):
         if hasattr(self, 'timeout') and self.timeout is not None:
             self.timeout.cancel()
-        delay = round(random.random()*1+3) # 1-4seconds
+        delay = round(random.random()*3+1) # 1-4seconds
         self.timeout = reactor.callLater(delay, self.move_callback)
 
     def target_coordinates(self):
