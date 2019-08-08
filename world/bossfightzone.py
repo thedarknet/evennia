@@ -220,6 +220,11 @@ room = create.create_object(Jail, "Internet Jail", zone, home=zone, report_to=ca
 room.db.desc = "You are in jail. There is no escape. Please serve your time quietly."
 
 #CODE
+# White Rabbit
+from typeclasses.dn8bossfight.rabbit import WhiteRabbitFactory
+create.create_script(WhiteRabbitFactory, key="WhiteRabbitFactory", report_to=caller)
+
+#CODE
 # Cleanup the Zone
 if DEBUG:
     cleanup_everything()
