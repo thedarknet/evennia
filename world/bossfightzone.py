@@ -53,6 +53,13 @@ else:
 
 #CODE
 # Create all the rooms
+import random
+COLORS = [
+    "red",
+    "black",
+    "purple",
+]
+
 # Coordinates  vy  >x
 SIZE=(10,11)
 rooms = dict()
@@ -62,7 +69,13 @@ for x in range(SIZE[0]):
             suffix = " (%d,%d)"%(x,y)
         else:
             suffix = ""
-        rooms["%s,%s"%(x,y)] = create.create_object(Room, "Somewhere inside Cyberez"+suffix, zone, home=zone, report_to=caller, attributes=[['coordinates',(x,y)]])
+
+        color = random.sample(COLORS, 1)[0]
+        desc = """
+        This room is empty. The walls are painted %s.
+        """.strip() % color
+
+        rooms["%s,%s"%(x,y)] = create.create_object(Room, "Somewhere inside Cyberez"+suffix, zone, home=zone, report_to=caller, attributes=[['coordinates',(x,y)],['desc',desc]])
 
 mapping = {
     "-1,-1": "nw",
@@ -234,6 +247,21 @@ from_exit = create.create_object(exit_typeclass, "Exit", room,
                                    aliases=["exit", "quit", "leave"],
                                    destination=white_rabbit_origin,
                                    report_to=caller)
+
+#CODE
+# Funhouse Rooms
+from typeclasses.dn8bossfight.funhouse import Funhouse, FunhouseExit
+rooms = [
+    getroom(1,4),
+    getroom(4,9),
+    getroom(6,4),
+]
+for room in rooms:
+    room.swap_typeclass(Funhouse, clean_cmdsets=True, run_start_hooks='all')
+    room.aliases.add("dn8bossfight#funhouse")
+    
+    for exit in room.exits:
+        exit.swap_typeclass(FunhouseExit, run_start_hooks=None)
 
 #CODE
 # Cleanup the Zone
