@@ -22,6 +22,24 @@ def getroom(x,y):
             return obj
     return None
 
+def cleanup_everything():
+    for script in search.scripts("AccountingTransactionFactory"):
+        script.stop()
+    if zone:
+        for room in zone.contents:
+            for item in room.contents:
+                if item.is_typeclass(Room, exact=False) or item.is_typeclass(Exit, exact=False):
+                    continue
+                if item.is_typeclass(Object, exact=False):
+                    item.delete()
+                else:
+                    caller.msg("Leaving behind object: %s (%s)"%(str(item),item.typeclass_path))
+        zone.delete() # also deletes all the rooms
+        caller.msg("zone deleted")
+
+#CODE
+cleanup_everything()
+
 #CODE
 # Setup the Zone
 if not zone:
@@ -188,16 +206,4 @@ room.db.desc = "You are in jail. There is no escape. Please serve your time quie
 #CODE
 # Cleanup the Zone
 if DEBUG:
-    for script in search.scripts("AccountingTransactionFactory"):
-        script.stop()
-    if zone:
-        for room in zone.contents:
-            for item in room.contents:
-                if item.is_typeclass(Room, exact=False) or item.is_typeclass(Exit, exact=False):
-                    continue
-                if item.is_typeclass(Object, exact=False):
-                    item.delete()
-                else:
-                    caller.msg("Leaving behind object: %s (%s)"%(str(item),item.typeclass_path))
-        zone.delete() # also deletes all the rooms
-        caller.msg("zone deleted")
+    cleanup_everything()
