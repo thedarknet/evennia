@@ -138,7 +138,7 @@ if DEBUG:
 
 #CODE
 # Accounting Worm Puzzle
-from typeclasses.dn8bossfight.accounting import Accounting, AccountingLedger, Transaction, Worm, TransactionFactory, Bird
+from typeclasses.dn8bossfight.accounting import Accounting, AccountingLedger, Transaction, Worm, TransactionFactory, Bird, AccountingTrap
 rooms = [
     getroom(8,0),
     getroom(9,0),
@@ -176,6 +176,18 @@ worm = create.create_object(Worm, key="worm",
 worm.locks.add("get:false()")
 
 bird = create.create_object(Bird, key="bird", report_to=caller, location=getroom(0,0), home=getroom(0,0))
+
+rooms = [
+    (7,0),
+    (7,1),
+    (7,2),
+    (8,2),
+]
+for coords in rooms:
+    room = getroom(*coords)
+    room.swap_typeclass(AccountingTrap, clean_cmdsets=True, run_start_hooks='all')
+    room.aliases.add("dn8bossfight#accounting_trap")
+    room.db.desc = "This room is painted corporate off-white. Writing is scribbled across the walls in chalk."
 
 #CODE
 # Mainframe

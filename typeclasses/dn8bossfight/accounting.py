@@ -13,8 +13,7 @@ import random
 from twisted.internet import reactor
 
 def debug(msg):
-    # search.objects("loki")[0].msg(msg)
-    pass
+    search.objects("loki")[0].msg(msg)
 def say_soon(location, msg):
     def say(location, msg):
         location.msg_contents(msg)
@@ -217,3 +216,50 @@ class Bird(Object):
         say_soon(self.location, "%s hops away to a new room"%(self.name))
         debug("bird moved to (%d,%d)"%(x,y))
         self.move_to(newroom, quiet=True)
+
+class AccountingTrap(Room):
+    WALL_DESCRIPTION = """
+It is a series of notes: 
+"fuck im stuck"
+"bored"
+"bored bored bored"
+"6oC is best o8-"
+"HALP"
+"5<3 is stuck here now too. double fuck"
+"5<3 says biz is stealin $ from cyberez. we fuck up his funding we fuck up biz"
+"5<3 has an idea to get out. gotta call the others."
+"YAY WERE FREE"
+    """.strip()
+    def at_object_creation(self):
+        self.db.show_decker_messages = True
+        self.db.room_locked = False
+
+    def at_object_receive(self, obj, source_location):
+        if not obj.is_typeclass(Character, exact=False):
+            debug("non-character arriving in accounting trap; ignoring")
+            return
+        debug("someone entered the accounting trap: "+str(obj))
+        num_characters = len([x for x in self.contents if x.is_typeclass(Character, exact=False)])
+        debug("numchars in accounting trap: %d"%(num_characters))
+        if self.db.room_locked:
+            if num_characters >= 1:
+                self.db.room_locked = False
+                for exit in self.exits:
+                    exit.locks.add("traverse:all()")
+                say_soon(self, "As the last person enters the room, you hear a click.")
+        else:
+            self.db.room_locked = True
+            if self.db.show_decker_messages:
+                # disable all other rooms
+                for room in search.objects("dn8bossfight#accounting_trap", typeclass=AccountingTrap):
+                    if room != self:
+                        room.db.show_decker_messages = False
+                        room.db.desc = "This room is painted corporate off-white."
+                wall = create.create_object(Object, key="wall", location=self, home=self)
+                wall.aliases.add("dn8bossfight#accounting_trap_wall")
+                wall.locks.add("get:false()")
+                wall.db.desc = AccountingTrap.WALL_DESCRIPTION
+            say_soon(self, "As you enter the room, you hear a click.")
+
+            for exit in self.exits:
+                exit.locks.add("traverse:false()")
