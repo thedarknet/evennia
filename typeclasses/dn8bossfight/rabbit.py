@@ -15,16 +15,18 @@ def say_soon(location, msg):
         location.msg_contents(msg)
     reactor.callLater(0, say, location, msg)
 
-results = search.objects('ZoneDN8BossFight', typeclass=Zone)
-if len(results) > 0:
-    zone = results[0]
-else:
-    zone = None
-
 def getroom(x,y):
+    zone = search.objects('ZoneDN8BossFight', typeclass=Zone)[0]
+
+    # debug("searching for room (%d,%d)" % (x,y))
     for obj in zone.contents:
-        if obj.is_typeclass(Room, exact=False) and obj.db.coordinates is not None and obj.db.coordinates[0] == x and obj.db.coordinates[1] == y:
-            return obj
+        try:
+            if obj.is_typeclass(Room, exact=False) and obj.db.coordinates is not None and obj.db.coordinates[0] == x and obj.db.coordinates[1] == y:
+                return obj
+        except Exception as err:
+            debug("error searching for room (%d,%d): %s" % (x,y,str(err)))
+            return None
+    debug("room with coordinates (%d,%d) not found"%(x,y))
     return None
 
 class WhiteRabbit(Object):
@@ -103,6 +105,8 @@ class WhiteRabbitFactory(Script):
 
     def at_repeat(self):
         room = getroom(*WhiteRabbit.PATH[0])
+        if room is None:
+            debug("unable to locate rabbit start room; relying on recovery logic instead")
         rabbit = create.create_object(WhiteRabbit, key="rabbit", location=room, home=room)
         rabbit.aliases.add("dn8bossfight#whiterabbit")
         rabbit.locks.add("get:false()")

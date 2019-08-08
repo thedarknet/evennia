@@ -186,13 +186,8 @@ class AntiBody(Object):
             return self.db.target.location.location.db.coordinates
         return None
 
-results = search.objects('ZoneDN8BossFight', typeclass=Zone)
-if len(results) > 0:
-    zone = results[0]
-else:
-    zone = None
-
 def getroom(x,y):
+    zone = search.objects('ZoneDN8BossFight', typeclass=Zone)[0]
     for obj in zone.contents:
         if obj.is_typeclass(Room, exact=False) and obj.db.coordinates is not None and obj.db.coordinates[0] == x and obj.db.coordinates[1] == y:
             return obj
