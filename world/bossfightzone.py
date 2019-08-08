@@ -175,10 +175,26 @@ cpu = create.create_object(CPU, key="CPU", report_to=caller, location=room, home
 cpu.aliases.add("dn8bossfight#cpu")
 cpu.locks.add("get:false()")
 
+# god's home directory
 room = getroom(6,9)
-# typeclass as a home directory
+# TODO typeclass as a home directory
 file = create.create_object(Object, key="garbage", report_to=caller, location=room, home=room)
-file.db.message = "Follow the white rabbit"
+file.db.desc = "An encrypted garbage file"
+file.db.message = "rbt whte follow"
+
+# plague's home directory
+room = getroom(0,8)
+# TODO typeclass as a home directory
+file = create.create_object(Object, key="garbage", report_to=caller, location=room, home=room)
+file.db.desc = "An encrypted garbage file"
+file.db.message = "davinci"
+
+# margo's home directory
+room = getroom(3,2)
+# TODO typeclass as a home directory
+file = create.create_object(Object, key="garbage", report_to=caller, location=room, home=room)
+file.db.desc = "An encrypted garbage file"
+file.db.message = "4bit + cache - bird"
 
 #CODE
 # Cryptochip theft
