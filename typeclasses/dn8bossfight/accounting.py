@@ -210,7 +210,7 @@ class Bird(Object):
                 if obj.is_typeclass(Room, exact=False) and obj.db.coordinates is not None and obj.db.coordinates[0] == x and obj.db.coordinates[1] == y:
                     return obj
             return None
-        SIZE=(5,5)
+        SIZE=(10,11)
         x = int(round(random.random()*SIZE[0]))
         y = int(round(random.random()*SIZE[1]))
         newroom = getroom(x,y)
