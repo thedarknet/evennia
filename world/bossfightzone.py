@@ -23,8 +23,9 @@ def getroom(x,y):
     return None
 
 def cleanup_everything():
-    for script in search.scripts("AccountingTransactionFactory"):
-        script.stop()
+    for scriptname in ["AccountingTransactionFactory", "WhiteRabbitFactory"]:
+        for script in search.scripts(scriptname):
+            script.stop()
     if zone:
         for room in zone.contents:
             for item in room.contents:
@@ -221,8 +222,18 @@ room.db.desc = "You are in jail. There is no escape. Please serve your time quie
 
 #CODE
 # White Rabbit
-from typeclasses.dn8bossfight.rabbit import WhiteRabbitFactory
+from typeclasses.dn8bossfight.rabbit import WhiteRabbitFactory, WhiteRabbit
 create.create_script(WhiteRabbitFactory, key="WhiteRabbitFactory", report_to=caller)
+
+# Secret meet-me room
+room = create.create_object(Room, "Meet-Me Room", zone, home=zone, report_to=caller, aliases=["dn8bossfight#meetme"])
+room.db.desc = "You are in the back corner of the Cyberez MeetMe room, where all connections come and go."
+
+white_rabbit_origin = getroom(*WhiteRabbit.PATH[0])
+from_exit = create.create_object(exit_typeclass, "Exit", room,
+                                   aliases=["exit", "quit", "leave"],
+                                   destination=white_rabbit_origin,
+                                   report_to=caller)
 
 #CODE
 # Cleanup the Zone

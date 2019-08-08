@@ -1,4 +1,6 @@
 import random
+from commands.command import Command
+from evennia import CmdSet
 from evennia.utils import create, search
 from twisted.internet import reactor
 from typeclasses.objects import Object
@@ -39,21 +41,29 @@ class WhiteRabbit(Object):
         (5,7),
         (4,7),
         (4,6),
-        (4,5), # cpu room
+        (4,5), # mainframe room
     ]
 
-    # def at_object_arrive(self, obj, source_location):
-    #     reactor.callLater(0.5, self.capture_target, obj)
+    def at_object_creation(self):
+        super(WhiteRabbit, self).at_object_creation()
+        self.cmdset.add(WhiteRabbitCmdSet, permanent=True)
+        self.db.frozen = False
 
     def move_callback(self):
         self.timeout = None
-        # check to see if we are on the coordinate grid
-        if self.location.db.coordinates is not None:
-            self.move()
+        if self.db.frozen:
+            debug("rabbit is frozen")
+            return
+        self.move()
 
     def move(self):
-        curindex = WhiteRabbit.PATH.index(self.location.db.coordinates)
-        # If not found, results in returning to the start room
+        try:
+            curindex = WhiteRabbit.PATH.index(self.location.db.coordinates)
+        except Exception as err:
+            debug("rabbit had an error; resetting to beginning; "+str(err))
+            # If not found, results in returning to the start room
+            curindex = -1
+        debug("rabbit index: "+str(curindex))
         nextroom = getroom(*WhiteRabbit.PATH[curindex + 1])
         debug("rabbit moving to "+str(nextroom)+" (%d,%d)"%nextroom.db.coordinates)
         self.move_to(nextroom)
@@ -61,8 +71,10 @@ class WhiteRabbit(Object):
     def at_after_move(self, source_location):
         if self.location.db.coordinates == WhiteRabbit.PATH[-1]:
             # done
+            debug("rabbit path complete")
             self.location.msg_contents("Payload delivered; rabbit self-destructing")
             self.delete()
+            debug("rabbit deleted")
         else:
             self.wait_to_move()
 
@@ -70,10 +82,15 @@ class WhiteRabbit(Object):
         self.wait_to_move()
 
     def wait_to_move(self):
-        if hasattr(self, 'timeout') and self.timeout is not None:
+        if hasattr(self, 'timeout') and self.timeout is not None and self.timeout.active():
             self.timeout.cancel()
         delay = round(random.random()*2+3) # 3-5seconds
         self.timeout = reactor.callLater(delay, self.move_callback)
+
+    def freeze(self):
+        if hasattr(self, 'timeout') and self.timeout is not None and self.timeout.active():
+            self.timeout.cancel()
+        self.db.frozen = True
 
 class WhiteRabbitFactory(Script):
     def at_script_creation(self):
@@ -83,9 +100,42 @@ class WhiteRabbitFactory(Script):
         """
         self.persistent = True
         self.interval = 5*60 # 5 minutes
-        self.db.start_room = getroom(*WhiteRabbit.PATH[0])
 
     def at_repeat(self):
-        rabbit = create.create_object(WhiteRabbit, key="rabbit", location=self.db.start_room, home=self.db.start_room)
+        room = getroom(*WhiteRabbit.PATH[0])
+        rabbit = create.create_object(WhiteRabbit, key="rabbit", location=room, home=room)
         rabbit.aliases.add("dn8bossfight#whiterabbit")
         rabbit.locks.add("get:false()")
+        rabbit.wait_to_move()
+        debug("rabbit released")
+
+        # testing
+        # rabbit.freeze()
+        # self.pause()
+
+class WhiteRabbitCmdSet(CmdSet):
+    def at_cmdset_creation(self):
+        super(WhiteRabbitCmdSet, self).at_cmdset_creation()
+        self.add(CmdRabbitExit)
+
+class CmdRabbitExit(Command):
+    key = "fini.obj"
+    auto_help = False
+
+    def func(self):
+        if self.caller.location.db.coordinates == WhiteRabbit.PATH[0]:
+            if self.obj.is_typeclass(WhiteRabbit):
+                self.obj.freeze()
+            else:
+                debug("unexpected typeclass in fini.obj "+str(self.obj))
+            for script in search.scripts("WhiteRabbitFactory"):
+                script.pause()
+            results = search.objects("dn8bossfight#meetme", typeclass=Room)
+            if len(results) > 0:
+                secret_room = results[0]
+                self.caller.move_to(secret_room)
+            else:
+                self.caller.msg("BUG! Contact @mansel")
+                debug("unable to locate secret room")
+        else:
+            self.caller.msg("ERROR unable to terminate once execution has begun")
