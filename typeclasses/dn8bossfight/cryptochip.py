@@ -1,5 +1,6 @@
 import random
 from evennia.utils import create, search
+from evennia.utils.evmenu import EvMenu
 from typeclasses.rooms import Room, Zone
 from typeclasses.exits import Exit
 from typeclasses.objects import Object
@@ -98,15 +99,22 @@ class AntiVirus(Room):
     def at_object_creation(self):
         super(AntiVirus, self).at_object_creation()
         self.db.antibodies = []
+        self.db.xfirst_antibody_enabled = True
+        self.db.yfirst_antibody_enabled = True
+        self.db.base_antibody_enabled = False
+        self.db.wrand_antibody_enabled = True
 
     def recover_cryptochip(self, cryptochip):
-        antibodyclasses = [
-            AntiBody,
-            XFirstAntiBody,
-            YFirstAntiBody,
-            WeightedRandomAntiBody,
-        ]
-        for typeclass in antibodyclasses:
+        antibodies = {
+            "xfirst_antibody_enabled": XFirstAntiBody,
+            "yfirst_antibody_enabled": YFirstAntiBody,
+            "base_antibody_enabled": AntiBody,
+            "wrand_antibody_enabled": WeightedRandomAntiBody,
+        }
+        active_antibodies = [antibodies[prop] for prop in antibodies.keys() if self.attributes.get(prop)]
+        debug("active antibodies: "+str(active_antibodies))
+
+        for typeclass in active_antibodies:
             antibody = create.create_object(typeclass, "antibody", self, home=self, report_to=None)
             # lol, antibodies allow `get` permission, so they can be picked up
             antibody.db.antivirus = self
@@ -117,6 +125,20 @@ class AntiVirus(Room):
         for antibody in self.db.antibodies:
             if antibody is not None:
                 antibody.delete()
+
+class AntiVirusControl(Object):
+    def return_appearance(self, looker):
+        appearance = super(AntiVirusControl, self).return_appearance(looker)
+
+        debug("someone looked at avcontrol")
+        antibodies_total = len(self.location.db.antibodies)
+        antibodies_in_room = len([True for obj in self.location.contents if obj.is_typeclass(AntiBody, exact=False)])
+        debug("avconsole check: %d, %d"%(antibodies_total, antibodies_in_room))
+        if antibodies_total > 0 and antibodies_in_room == 0:
+            EvMenu(looker, "world.antivirus_control")
+            return None
+        else:
+            return appearance + "\n\nThe AntiBodies behind the desk look at you menacingly and block your view of the control console."
 
 class AntiBody(Object):
     STATE_PASSIVE = 0

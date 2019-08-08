@@ -212,7 +212,7 @@ file.db.message = "4bit + cache - bird"
 
 #CODE
 # Cryptochip theft
-from typeclasses.dn8bossfight.cryptochip import Playtronics, AntiVirus
+from typeclasses.dn8bossfight.cryptochip import Playtronics, AntiVirus, AntiVirusControl
 from typeclasses.dn8bossfight.rooms import Jail
 
 room = getroom(1,1)
@@ -229,6 +229,9 @@ room.swap_typeclass(AntiVirus, clean_cmdsets=True, run_start_hooks='all')
 room.aliases.add("dn8bossfight#antivirus")
 room.name = "AntiVirus"
 room.db.desc = "You see several AntiBodies sitting behind a desk, wholly disinterested in you."
+
+obj = create.create_object(AntiVirusControl, key="AntiVirus Control Console", location=room, home=zone, report_to=caller, aliases=["dn8bossfight#avcontrol"])
+obj.locks.add("get:false()")
 
 room = create.create_object(Jail, "Internet Jail", zone, home=zone, report_to=caller, aliases=["dn8bossfight#jail"])
 room.db.desc = "You are in jail. There is no escape. Please serve your time quietly."
