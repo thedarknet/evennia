@@ -145,9 +145,25 @@ worm.locks.add("get:false()")
 
 bird = create.create_object(Bird, key="bird", report_to=caller, location=getroom(0,0), home=getroom(0,0))
 
+#CODE
+# Mainframe
+from typeclasses.dn8bossfight.cpu import Mainframe, CPU
+
+room = getroom(4,5)
+room.swap_typeclass(Mainframe, clean_cmdsets=True, run_start_hooks='all')
+room.name = "Mainframe"
+
+cpu = create.create_object(CPU, key="CPU", report_to=caller, location=room, home=room)
+cpu.aliases.add("dn8bossfight#cpu")
+cpu.locks.add("get:false()")
+
+room = getroom(6,9)
+# typeclass as a home directory
+file = create.create_object(Object, key="garbage", report_to=caller, location=room, home=room)
+file.db.message = "Follow the white rabbit"
 
 #CODE
-# Cryptochip theft and installation
+# Cryptochip theft
 from typeclasses.dn8bossfight.cryptochip import Playtronics, AntiVirus
 from typeclasses.dn8bossfight.rooms import Jail
 
