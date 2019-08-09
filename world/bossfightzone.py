@@ -252,17 +252,31 @@ room.db.desc = "You are in jail. There is no escape. Please serve your time quie
 #CODE
 # White Rabbit
 from typeclasses.dn8bossfight.rabbit import WhiteRabbitFactory, WhiteRabbit
+from typeclasses.dn8bossfight.meetme import DataLink, DataLinkCmdSet
 create.create_script(WhiteRabbitFactory, key="WhiteRabbitFactory", report_to=caller)
 
 # Secret meet-me room
 room = create.create_object(Room, "Meet-Me Room", zone, home=zone, report_to=caller, aliases=["dn8bossfight#meetme"])
 room.db.desc = "You are in the back corner of the Cyberez MeetMe room, where all connections come and go."
+room.cmdset.add(DataLinkCmdSet, permanent=True)
 
 white_rabbit_origin = getroom(*WhiteRabbit.PATH[0])
 from_exit = create.create_object(exit_typeclass, "Exit", room,
                                    aliases=["exit", "quit", "leave"],
                                    destination=white_rabbit_origin,
                                    report_to=caller)
+
+obj = create.create_object(DataLink, "March Hare Data Link", location=room, home=room, aliases=["dn8bossfight#march_hare_data_link"])
+obj.locks.add("get:false()")
+obj.db.desc = """
+A Decker data link to the March Hare. You can disconnect it.
+""".strip()
+
+obj = create.create_object(DataLink, "Daemon Data Link", location=room, home=room, aliases=["dn8bossfight#daemon_data_link"])
+obj.locks.add("get:false()")
+obj.db.desc = """
+A Decker data link to the Daemon. You can disconnect it.
+""".strip()
 
 #CODE
 # Funhouse Rooms
