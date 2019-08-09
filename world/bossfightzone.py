@@ -170,12 +170,13 @@ for room in rooms:
 create.create_script(TransactionFactory, key="AccountingTransactionFactory", report_to=caller, attributes=[["rooms",rooms]])
 
 worm = create.create_object(Worm, key="worm",
-                            location=getroom(3,0), home=getroom(3,0),
+                            location=getroom(8,0), home=getroom(8,0),
                             report_to=caller
                             )
 worm.locks.add("get:false()")
+worm.db.desc = "A hungry looking worm wearing a fancy tie. He's too small and quick for you to grab, but maybe a smaller animal could do it."
 
-bird = create.create_object(Bird, key="bird", report_to=caller, location=getroom(0,0), home=getroom(0,0))
+bird = create.create_object(Bird, key="bird", report_to=caller, location=getroom(3,8), home=getroom(3,8))
 
 rooms = [
     (7,0),

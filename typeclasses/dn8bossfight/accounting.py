@@ -242,7 +242,7 @@ It is a series of notes:
         num_characters = len([x for x in self.contents if x.is_typeclass(Character, exact=False)])
         debug("numchars in accounting trap: %d"%(num_characters))
         if self.db.room_locked:
-            if num_characters >= 1:
+            if num_characters >= 10:
                 self.db.room_locked = False
                 for exit in self.exits:
                     exit.locks.add("traverse:all()")
