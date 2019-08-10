@@ -296,7 +296,7 @@ for room in rooms:
 #CODE
 # Red Herring Rooms
 
-from typeclasses.dn8bossfight.extra import Crate, InfiniteFlashlight, RememberLookedAt, Safe, UsableObject
+from typeclasses.dn8bossfight.extra import Crate, GrueHouse, GrueHouseExit, InfiniteFlashlight, RememberLookedAt, RetroComputer, Safe, UsableObject
 
 # UR1
 room = getroom(9,6)
@@ -528,6 +528,7 @@ room = getroom(5,5)
 room.db.desc = """
 This room’s walls are covered with retro computer screens. A single desk sits in the middle of the room. A four-handed keyboard (why??) sits on the desk, connected to a tower under the desk.
 """.strip()
+# TODO modify room description when keyboard is picked up
 
 obj = create.create_object(Object, "screens", room)
 obj.db.desc = """
@@ -558,8 +559,8 @@ ROOT
 """.strip()
 obj.locks.add("get:false()")
 
-obj = create.create_object(Object, "keyboard", room)
-obj.db.desc = """
+keyboard = create.create_object(UsableObject, "keyboard", room)
+keyboard.db.desc = """
 A four-handed keyboard. Why???
 """
 
@@ -571,23 +572,27 @@ room.db.desc = """
 This room’s walls are covered with retro computer screens. A single desk sits in the middle of the room. A tower sits under the desk. It has no keyboard attached.
 """.strip()
 
-obj = create.create_object(Object, "screen", room)
+obj = create.create_object(RetroComputer, "screen", room)
+obj.aliases.add("desk")
+obj.aliases.add("computer")
 obj.db.desc = """
-The screens are all black
+The screens are all black.
 """.strip()
 obj.locks.add("get:false()")
-
-# TODO use keyboard to change screen description
+obj.db.open_with = keyboard
 
 #####
 
 # UR20
 room = getroom(4,7)
+room.swap_typeclass(GrueHouse, clean_cmdsets=True, run_start_hooks='all')
+room.aliases.add("dn8bossfight#gruehouse")
 room.db.desc = """
 This room is dark. You are likely to be eaten by a grue.
 """.strip()
 
-# TODO avoid getting eaten by a grue
+for exit in room.exits:
+    exit.swap_typeclass(GrueHouseExit, run_start_hooks=None)
 
 #####
 

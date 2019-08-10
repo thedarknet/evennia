@@ -1,12 +1,13 @@
 # Test extra rooms
 ```
+# visit grue room (4,7) and get eaten/sent back to Entrance (1,7) when you leave
 (9,7) look smile
 (0,3) look painting
 look safe
 get crowbar
 (1,10) use crowbar on crate
 get flashlight
-# visit grue room and don't die when you exit
+# visit grue room (4,7) and don't die when you leave
 ```
 ```
 get keyboard

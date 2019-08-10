@@ -28,3 +28,8 @@ lock functions from evennia.locks.lockfuncs.
 #    """
 #    print "%s tried to access %s. Access denied." % (accessing_obj, accessed_obj)
 #    return False
+
+def has_looked_at(accessing_obj, accessed_obj, *args, **kwargs):
+    if len(args) != 1:
+        return False
+    return accessing_obj.attributes.get("looked_at_%s"%(args[0]))
