@@ -192,7 +192,7 @@ for coords in rooms:
 
 #CODE
 # Mainframe
-from typeclasses.dn8bossfight.cpu import Mainframe, CPU
+from typeclasses.dn8bossfight.cpu import Mainframe, CPU, HomeDirectory
 
 room = getroom(4,5)
 room.swap_typeclass(Mainframe, clean_cmdsets=True, run_start_hooks='all')
@@ -204,24 +204,30 @@ cpu.locks.add("get:false()")
 
 # god's home directory
 room = getroom(6,9)
-# TODO typeclass as a home directory
-file = create.create_object(Object, key="garbage", report_to=caller, location=room, home=room)
+room.swap_typeclass(HomeDirectory, clean_cmdsets=True)
+room.db.desc = "god's home directory"
+file = create.create_object(Object, key=".GARBAGE", report_to=caller, location=room, home=room)
 file.db.desc = "An encrypted garbage file"
 file.db.message = "rbt whte follow"
+file.locks.add("view:false()")
 
 # plague's home directory
 room = getroom(0,8)
-# TODO typeclass as a home directory
-file = create.create_object(Object, key="garbage", report_to=caller, location=room, home=room)
+room.swap_typeclass(HomeDirectory, clean_cmdsets=True)
+room.db.desc = "plague's home directory"
+file = create.create_object(Object, key=".GARBAGE", report_to=caller, location=room, home=room)
 file.db.desc = "An encrypted garbage file"
 file.db.message = "davinci"
+file.locks.add("view:false()")
 
 # margo's home directory
 room = getroom(3,2)
-# TODO typeclass as a home directory
-file = create.create_object(Object, key="garbage", report_to=caller, location=room, home=room)
+room.swap_typeclass(HomeDirectory, clean_cmdsets=True)
+room.db.desc = "margo's home directory"
+file = create.create_object(Object, key=".GARBAGE", report_to=caller, location=room, home=room)
 file.db.desc = "An encrypted garbage file"
 file.db.message = "4bit + cache - bird"
+file.locks.add("view:false()")
 
 #CODE
 # Cryptochip theft

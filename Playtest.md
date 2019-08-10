@@ -35,14 +35,15 @@ Person 2: head to antivirus room
 Person 1: pick up the crypto chip
 Person 2: `get antibody` as soon as it appears in the room
 Person 1: head to the CPU room: e,s,s,s,s, e,e
-Person 1: `drop cryptochip`, `look cpu` and see that there is now a cryptochip installed
+Person 1: `use cryptochip on cpu`, `look cpu` and see that there is now a cryptochip installed
 # Update firewall (WIP)
 # Decrypt garbage file
 Go to god's room (6,9)
-`get garbage`
+`ls -a`
+`get .garbage`
 Go to CPU room (4,5)
-`drop garbage`
-`decrypt garbage`
+`drop .garbage`
+`decrypt .garbage`
 # Test accounting trap
 This requires 10 people or modifying the code to require fewer people to release the lock
 # Stop accounting worm

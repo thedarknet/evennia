@@ -1,3 +1,4 @@
+from commands.command import Command
 from typeclasses.rooms import Room, Zone
 from typeclasses.objects import Object
 from typeclasses.dn8bossfight.cryptochip import Cryptochip
@@ -99,3 +100,47 @@ class CPU(Object):
             pass
 
         return appearance
+
+class CmdListFiles(Command):
+    """
+    ls [-a]
+    """
+    FILES = """
+WRHSE. EXPEND
+GARBAGE
+ANNUAL BUDGET
+COMP. OPERATIONS
+KINEMATICS
+SEA-BOARD LAWS
+TPGC. EXPEND
+WRHSE. LOCATION
+COMPANY STATUS
+COMPOSITE PLANTS
+EXPLOR. DVLT
+EXPLOR. RESEARCH
+GEOLOGIC RESEARCH
+""".strip()
+    def func(self):
+        files = CmdListFiles.FILES
+        if self.args.strip() == "-a":
+            self.obj.search(".garbage").locks.add("view:all()")
+            files = ".GARBAGE\n" + files
+        self.caller.msg("/root/.workspace/\n"+files)
+
+import evennia.commands.default.general
+class CmdLook(evennia.commands.default.general.CmdLook):
+    aliases = []
+
+class HomeDirectory(Room):
+    def at_init(self):
+        cmdset = CmdSet(key="%s CmdSet"%self.name, cmdsetobj=self)
+        cmdset.duplicates = None
+        cmdset.priority = 10
+        cmd = CmdListFiles(key="ls")
+        cmdset.add(cmd)
+        cmdset.add(CmdLook)
+        self.cmdset.add(cmdset)
+
+    def at_object_leave(self, obj, destination):
+        if obj.name == ".GARBAGE":
+            obj.locks.add("view:all()")
