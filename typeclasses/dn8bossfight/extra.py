@@ -47,7 +47,7 @@ class RetroComputer(Object):
     def obj_used_upon(self, user, obj_used):
         debug("%s used on retrocomputer; expecting %s"%(obj_used,self.db.open_with))
         if obj_used == self.db.open_with:
-            self.location.db.desc = "This room’s walls are covered with retro computer screens. A four-handed keyboard (why??) sits on the desk, connected to a tower under the desk."
+            self.location.db.desc = "This room's walls are covered with retro computer screens. A four-handed keyboard (why??) sits on the desk, connected to a tower under the desk."
             self.db.desc = "FINGERPRINT MATCH FOUND: STANLEY JOBSON"
             user.msg("You attach the four-handed keyboard to the tower (why????). The computer screens light up.")
         else:

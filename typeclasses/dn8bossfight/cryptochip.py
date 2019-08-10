@@ -1,6 +1,8 @@
 import random
 from evennia.utils import create, search
 from evennia.utils.evmenu import EvMenu
+from typeclasses.dn8bossfight.extra import UsableObject
+from typeclasses.characters import Character
 from typeclasses.rooms import Room, Zone
 from typeclasses.exits import Exit
 from typeclasses.objects import Object
@@ -17,7 +19,7 @@ def say_soon(location, msg):
 
 PASSPHRASE = "my voice is my passport"
 
-class Cryptochip(Object):
+class Cryptochip(UsableObject):
     """
     Manages all movement of the cryptochip and notifies relevant downstream parties when the state changes
     """
@@ -74,6 +76,11 @@ class Playtronics(Room):
         self.db.has_cryptochip = True
 
     def unlock_cryptochip(self):
+        prisoners = [x for x in search.objects("dn8bossfight#jail")[0].contents if x.is_typeclass(Character)]
+        if len(prisoners) > 0:
+            debug("blocking cryptochip release due to quarantine")
+            self.msg_contents("Unable to unlock while quarantine is active.")
+            return
         if self.db.has_cryptochip:
             debug("releasing the cryptochip!")
             self.db.has_cryptochip = False
@@ -113,6 +120,8 @@ class AntiVirus(Room):
         }
         active_antibodies = [antibodies[prop] for prop in antibodies.keys() if self.attributes.get(prop)]
         debug("active antibodies: "+str(active_antibodies))
+
+        search.channels("Public")[0].msg("|rCryptochip stolen. AntiVirus activated. Quarantine in progress.")
 
         for typeclass in active_antibodies:
             antibody = create.create_object(typeclass, "antibody", self, home=self, report_to=None)

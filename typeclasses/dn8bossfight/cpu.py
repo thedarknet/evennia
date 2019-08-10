@@ -4,6 +4,7 @@ from typeclasses.dn8bossfight.cryptochip import Cryptochip
 from evennia.commands.default.muxcommand import MuxCommand
 from evennia import CmdSet
 from twisted.internet import reactor
+from evennia.utils import search
 
 def debug(msg):
     # search.objects("loki")[0].msg(msg)
@@ -20,7 +21,7 @@ class Mainframe(Room):
             obj.move_to(cpu)
             cpu.db.cryptochip_installed = True
             debug("cryptochip installed")
-            # TODO public announcement to all connected users
+            search.channels("Public")[0].msg("|rCryptochip installed in CPU")
 
 class CmdDecrypt(MuxCommand):
     """
@@ -68,6 +69,16 @@ class CPU(Object):
         self.db.garbage_file_decoded = ""
 
         self.cmdset.add(CPUCmdSet, permanent=True)
+
+    def obj_used_upon(self, user, obj_used):
+        if obj_used == search.objects("dn8bossfight#cryptochip", typeclass=Cryptochip)[0]:
+            cpu = self.search("CPU")
+            obj_used.move_to(cpu)
+            cpu.db.cryptochip_installed = True
+            debug("cryptochip installed")
+            search.channels("Public")[0].msg("|rCryptochip installed in CPU")
+        else:
+            user.msg("Nothing happens")
 
     def return_appearance(self, looker):
         appearance = super(CPU, self).return_appearance(looker)

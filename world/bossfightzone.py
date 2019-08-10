@@ -246,8 +246,8 @@ room.db.desc = "You see several AntiBodies sitting behind a desk, wholly disinte
 obj = create.create_object(AntiVirusControl, key="AntiVirus Control Console", location=room, home=zone, report_to=caller, aliases=["dn8bossfight#avcontrol"])
 obj.locks.add("get:false()")
 
-room = create.create_object(Jail, "Internet Jail", zone, home=zone, report_to=caller, aliases=["dn8bossfight#jail"])
-room.db.desc = "You are in jail. There is no escape. Please serve your time quietly."
+room = create.create_object(Jail, "Quarantine", zone, home=zone, report_to=caller, aliases=["dn8bossfight#jail"])
+room.db.desc = "You are in quarantine. There is no escape. Please serve your time quietly."
 
 #CODE
 # White Rabbit

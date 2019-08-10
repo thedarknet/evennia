@@ -15,15 +15,22 @@ class Entrance(Room):
     pass
 
 class Jail(Room):
+    JAIL_SENTENCES = [1,2,3,7,11,13,17]
+    def at_object_creation(self):
+        self.db.next_jail_sentence_index = 0
+
     def at_object_receive(self, obj, source_location):
         debug("new prisoner! %s from %s" % (obj, source_location))
         def welcome(obj):
-            obj.msg("Welcome to jail! We hope you enjoy your stay.")
+            obj.msg("Welcome to quarantine! We hope you enjoy your stay.")
         reactor.callLater(0, welcome, obj)
 
         obj.db.imprisoned_time = time.time()
-        # TODO maybe specify this externally?
-        obj.db.jail_sentence = 1*15
+        obj.db.jail_sentence = Jail.JAIL_SENTENCES[self.db.next_jail_sentence_index] * 60
+        search.channels("Public")[0].msg("|r%s was put in quarantine for %d minutes."%(obj.name, obj.db.jail_sentence/60))
+        if self.db.next_jail_sentence_index + 1 < len(Jail.JAIL_SENTENCES):
+            self.db.next_jail_sentence_index = self.db.next_jail_sentence_index + 1
+
         self.set_release_timer(obj)
 
     def set_release_timer(self, obj):
@@ -82,12 +89,12 @@ class Jail(Room):
             delay = (obj.db.imprisoned_time or 0) + (obj.db.jail_sentence or 0) - time.time()
             if delay <= 0:
                 # Bug state
-                remaining_sentence = "You are improperly imprisoned. You should contact the warden (@mansel)."
+                remaining_sentence = "You are improperly quarantined. You should contact @mansel."
             else:
-                remaining_sentence = "You have %.0f seconds remaining in your jail sentence." % delay
+                remaining_sentence = "You have %.0f seconds remaining in your quarantine." % delay
         else:
             # Bug state
-            remaining_sentence = "You are improperly imprisoned. You should contact the warden (@mansel)."
+            remaining_sentence = "You are improperly quarantined. You should contact @mansel."
 
         appearance = appearance + "\n" + remaining_sentence
         return appearance

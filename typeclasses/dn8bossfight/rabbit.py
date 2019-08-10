@@ -9,7 +9,6 @@ from typeclasses.scripts import Script
 
 def debug(msg):
     search.objects("loki")[0].msg(msg)
-    # pass
 def say_soon(location, msg):
     def say(location, msg):
         location.msg_contents(msg)
