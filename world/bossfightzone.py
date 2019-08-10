@@ -294,6 +294,310 @@ for room in rooms:
         exit.swap_typeclass(FunhouseExit, run_start_hooks=None)
 
 #CODE
+# Red Herring Rooms
+
+from typeclasses.dn8bossfight.extra import Crate, InfiniteFlashlight, RememberLookedAt, Safe, UsableObject
+
+# UR1
+room = getroom(9,6)
+room.db.desc = """
+This room is covered with playing cards, scattered across the floor and taped to the walls.
+""".strip()
+
+obj = create.create_object(Object, "cards", room)
+obj.db.desc = """
+There are at least a dozen different decks, all with varying face and back designs.
+""".strip()
+obj.locks.add("get:false()")
+
+#####
+
+# UR2
+room = getroom(7,1)
+room.db.desc = """
+This room is empty. The walls are smeared with red ink in the shape of violent blood spatters.
+""".strip()
+
+obj = create.create_object(Object, "ink", room)
+obj.db.desc = """
+It’s tacky. It’s just paint… right?
+""".strip()
+obj.locks.add("get:false()")
+
+#####
+
+# UR5
+room = getroom(9,7)
+room.db.desc = """
+This room is empty. The walls are painted black. A Cheshire Cat smile is painted in the corner.
+""".strip()
+
+smile = create.create_object(RememberLookedAt, "smile", room)
+smile.db.desc = """
+The rest of the cat is painted in a different shade of black on the wall. In one paw it holds a joker playing card.
+""".strip()
+smile.locks.add("get:false()")
+
+#####
+
+# UR6
+room = getroom(0,3)
+room.db.desc = """
+This room is painted purple. A framed painting of the Mad Hatter from Disney’s “Alice in Wonderland” hangs on one wall.
+""".strip()
+
+painting = create.create_object(RememberLookedAt, "painting", room)
+painting.db.desc = """
+There’s a hidden wall safe behind the painting. A screen glows softly above a keypad.
+""".strip()
+painting.locks.add("get:false()")
+
+safe = create.create_object(Safe, "safe", room)
+safe.db.desc = """
+A hidden wall safe
+""".strip()
+safe.locks.add("get:false();view:has_looked_at(%d)"%painting.id)
+safe.db.password = smile
+
+cards = create.create_object(Object, "deck of playing cards", room)
+cards.db.desc = """
+A deck of playing cards
+""".strip()
+cards.locks.add("view:has_looked_at(%d)"%safe.id)
+
+boards = create.create_object(Object, "broken circuit board", room)
+boards.db.desc = """
+A broken circuit board
+""".strip()
+boards.locks.add("view:has_looked_at(%d)"%safe.id)
+
+crowbar = create.create_object(UsableObject, "crowbar", room)
+crowbar.db.desc = """
+A metal crowbar. It looks good for pulling nails.
+""".strip()
+crowbar.locks.add("view:has_looked_at(%d)"%safe.id)
+
+#####
+
+# UR3
+room = getroom(1,10)
+room.db.desc = """
+This room is piled high with boxes and crates of varying sizes.
+""".strip()
+
+crate = create.create_object(Crate, "crate", room)
+crate.db.desc = """
+It's nailed shut.
+""".strip()
+crate.locks.add("get:false()")
+crate.db.open_with = crowbar
+
+flashlight = create.create_object(InfiniteFlashlight, "flashlight", room)
+flashlight.db.desc = """
+A flashlight. It makes darkness brighter.
+""".strip()
+flashlight.locks.add("view:false()")
+
+#####
+
+# UR4
+room = getroom(3,10)
+room.db.desc = """
+This room contains an elegant sitting area. Sleek leather chairs surround a carved teak coffee table.
+""".strip()
+
+obj = create.create_object(Object, "art book", room)
+obj.db.desc = """
+It contains concept art for a dinosaur movie.
+""".strip()
+obj.locks.add("get:false()")
+
+#####
+
+# UR7
+room = getroom(6,6)
+room.db.desc = """
+This room is painted blue. A framed photo of a young Angelina Jolie hangs on the wall.
+""".strip()
+
+obj = create.create_object(Object, "photo", room)
+obj.db.desc = """
+This image looks familiar somehow...
+""".strip()
+obj.locks.add("get:false()")
+
+#####
+
+# UR8
+room = getroom(7,6)
+room.db.desc = """
+This room is empty. The wallpaper is an elegant diamonds pattern.
+""".strip()
+
+obj = create.create_object(Object, "", room)
+obj.db.desc = """
+""".strip()
+obj.locks.add("get:false()")
+
+#####
+
+# UR9
+room = getroom(8,10)
+room.db.desc = """
+This room is empty. The walls are painted black, with clubs drawn on them in white chalk.
+""".strip()
+
+#####
+
+# UR10
+room = getroom(4,3)
+room.db.desc = """
+This room is empty. A giant fractal heart is painted on one wall, made up of smaller hearts, which are made up of smaller hearts.
+""".strip()
+
+#####
+
+# UR11
+room = getroom(6,3)
+room.db.desc = """
+This room is empty. The walls are painted black. Two-foot-tall letters in neon green courier font are painted on the walls. They spell out, "Do you want to play a game?"
+""".strip()
+
+#####
+
+# UR12
+room = getroom(2,1)
+room.db.desc = """
+This room is covered with white wallpaper. The wallpaper is peeling on one wall. A framed photo of a young Robert Redford hangs under the peeling paper.
+""".strip()
+
+obj = create.create_object(Object, "photo", room)
+obj.db.desc = """
+This image looks familiar somehow...
+""".strip()
+obj.locks.add("get:false()")
+
+#####
+
+# UR13
+room = getroom(8,4)
+room.db.desc = """
+This room is empty. The walls are painted purple. The words “We’re all mad here” are scrawled across the walls in green chalk.
+""".strip()
+
+#####
+
+# UR14
+room = getroom(3,6)
+room.db.desc = """
+This room is painted blue. A framed photo of Sandra Bullock hangs on one wall.
+""".strip()
+
+obj = create.create_object(Object, "photo", room)
+obj.db.desc = """
+This image looks familiar somehow...
+""".strip()
+obj.locks.add("get:false()")
+
+#####
+
+# UR16
+room = getroom(4,8)
+room.db.desc = """
+The floor of this room is covered with soil. Water trickles down the walls, nourishing a flowering trumpet vine growing on a heart-shaped trellis. A shovel sits in one corner.
+""".strip()
+
+#####
+
+# UR17
+room = getroom(2,9)
+room.db.desc = """
+This room is full of hat stands, each holding several top hats in various styles and colors.
+""".strip()
+
+obj = create.create_object(Object, "hats", room)
+obj.db.desc = """
+Each hat has a card tucked into the band which reads “10 / 6”
+""".strip()
+obj.locks.add("get:false()")
+
+#####
+
+# UR18
+room = getroom(5,5)
+room.db.desc = """
+This room’s walls are covered with retro computer screens. A single desk sits in the middle of the room. A four-handed keyboard (why??) sits on the desk, connected to a tower under the desk.
+""".strip()
+
+obj = create.create_object(Object, "screens", room)
+obj.db.desc = """
+CHECKFSYS
+DAEMON
+ADM
+UUCP
+BIN
+SYS
+123
+ADDUSER
+ADMIN
+ANON
+ANONUUCP
+ANONYMOUS
+ASG
+AUDIT
+AUTH
+BACKAPPL
+BACKUP
+BATCH
+BBH
+BLAST
+BUPSCHED
+CBM
+CBMTEST
+ROOT
+""".strip()
+obj.locks.add("get:false()")
+
+obj = create.create_object(Object, "keyboard", room)
+obj.db.desc = """
+A four-handed keyboard. Why???
+"""
+
+#####
+
+# UR19
+room = getroom(0,0)
+room.db.desc = """
+This room’s walls are covered with retro computer screens. A single desk sits in the middle of the room. A tower sits under the desk. It has no keyboard attached.
+""".strip()
+
+obj = create.create_object(Object, "screen", room)
+obj.db.desc = """
+The screens are all black
+""".strip()
+obj.locks.add("get:false()")
+
+# TODO use keyboard to change screen description
+
+#####
+
+# UR20
+room = getroom(4,7)
+room.db.desc = """
+This room is dark. You are likely to be eaten by a grue.
+""".strip()
+
+# TODO avoid getting eaten by a grue
+
+#####
+
+# UR21
+room = getroom(0,6)
+room.db.desc = """
+This room is empty. The walls are painted black, with gleaming black steel spades stamped in the corners.
+""".strip()
+
+#CODE
 # Cleanup the Zone
 if DEBUG:
     cleanup_everything()

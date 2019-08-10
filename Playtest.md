@@ -1,3 +1,17 @@
+# Test extra rooms
+```
+(9,7) look smile
+(0,3) look painting
+look safe
+get crowbar
+(1,10) use crowbar on crate
+get flashlight
+# visit grue room and don't die when you exit
+```
+```
+get keyboard
+use keyboard on screen
+```
 # Test funhouse
 From the Entrance room: n,n,n to get into the room; now every time you go any direction but south, you should just see the room color change. If you go s,s,s (no matter what you did inside the room), you should be back in the Entrance room.
 # Retrieve the cryptochip and get caught
