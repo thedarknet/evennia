@@ -174,7 +174,8 @@ class Bird(Object):
         worm.db.balance = 0
 
     def at_desc(self, looker):
-        if looker.is_typeclass(Character, exact=False):
+        worms = [obj for obj in self.contents if obj.is_typeclass(Worm)]
+        if looker.is_typeclass(Character, exact=False) and len(worms) > 0:
             create.create_object(Object, key="money", attributes=[["desc","$%0.2f"%self.db.balance]], location=self.location, report_to=looker)
             say_soon(self.location, "%s drops money and flies away, never to be seen again"%(self.name))
             worm = next(obj for obj in self.contents if obj.is_typeclass(Worm))

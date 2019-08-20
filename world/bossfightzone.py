@@ -319,7 +319,7 @@ obj.locks.add("get:false()")
 #####
 
 # UR2
-room = getroom(7,1)
+room = getroom(6,0)
 room.db.desc = """
 This room is empty. The walls are smeared with red ink in the shape of violent blood spatters.
 """.strip()
@@ -439,11 +439,6 @@ room = getroom(7,6)
 room.db.desc = """
 This room is empty. The wallpaper is an elegant diamonds pattern.
 """.strip()
-
-obj = create.create_object(Object, "", room)
-obj.db.desc = """
-""".strip()
-obj.locks.add("get:false()")
 
 #####
 
@@ -607,6 +602,92 @@ room = getroom(0,6)
 room.db.desc = """
 This room is empty. The walls are painted black, with gleaming black steel spades stamped in the corners.
 """.strip()
+
+#CODE
+# Decker Rooms
+from typeclasses.dn8bossfight.extra import RememberLookedAt
+
+# Spades' Room
+room = getroom(8,8)
+room.db.desc = """
+This room is empty. The walls are smeared with black ink in the shape of violent blood spatters.
+""".strip()
+
+obj = create.create_object(Object, "ink", room)
+obj.db.desc = """
+An upside-down spade symbol is drawn in the ink sprays.
+""".strip()
+obj.locks.add("get:false()")
+
+secret_room = create.create_object(Room, "Spades' Room", zone)
+secret_room.db.desc = """
+This room is painted black. A black marble and glass desk dominates the room, with a stiff-backed black leather executive chair behind it.
+""".strip()
+
+desk = create.create_object(RememberLookedAt, "desk", room)
+desk.db.desc = """
+Detailed diagrams of Cyberez's networks cover the desk, along with notes for how to disrupt the networks and embed the March Hare. A black ledger sits to one side of the desk.
+""".strip()
+desk.locks.add("get:false()")
+
+obj = create.create_object(Object, "ledger", room)
+obj.db.desc = """
+The ledger is full of names. Most of them have been crossed off. The only two that haven't are "Three of Spades" and "BiZ".
+""".strip()
+obj.locks.add("get:false();view:has_looked_at(%d)"%desk.id)
+
+to_exit = create.create_object(exit_typeclass, "down", room,
+                                aliases=["d"],
+                                destination=secret_room,
+                                report_to=caller)
+from_exit = create.create_object(exit_typeclass, "up", secret_room,
+                                   aliases=["u"],
+                                   destination=room,
+                                   report_to=caller)
+
+# Diamonds' Room
+room = getroom(1,5)
+room.db.desc = """
+This room is filled with neatly-ordered ledgers stacked in bookshelves.
+""".strip()
+
+obj = create.create_object(Object, "ledgers", room)
+obj.db.desc = """
+The ledgers contain records of purchases of flowers, both individually and in elaborate bouquets. Each ledger holds hundreds of these purchases, along with dates, times, and the name of the recipient.
+""".strip()
+obj.locks.add("get:false()")
+
+obj = create.create_object(Object, "bookshelves", room)
+obj.db.desc = """
+An upside-down diamond symbol is carved near the top of one bookshelf.
+""".strip()
+obj.locks.add("get:false()")
+
+secret_room = create.create_object(Room, "Diamonds' Room", zone)
+secret_room.db.desc = """
+This room is painted white with tasteful red highlights. A sleek red desk sits against one wall, and a circle of red chairs with diamond-peaked backs surrounds a low table on the other side of the room.
+""".strip()
+
+desk = create.create_object(RememberLookedAt, "desk", room)
+desk.db.desc = """
+Several calculators are scattered across the desk, and an abacus hangs on a hook on the wall beside it. Another ledger, half-filled with records of flower purchases, is open on the desk. A handwritten sticky note is stuck to the current, unfinished page.
+""".strip()
+desk.locks.add("get:false()")
+
+obj = create.create_object(Object, "note", room)
+obj.db.desc = """
+The note reads, "q<3 3x peach rose, 5x magnolia, 7x holly"
+""".strip()
+obj.locks.add("get:false();view:has_looked_at(%d)"%desk.id)
+
+to_exit = create.create_object(exit_typeclass, "up", room,
+                                aliases=["u"],
+                                destination=secret_room,
+                                report_to=caller)
+from_exit = create.create_object(exit_typeclass, "down", secret_room,
+                                   aliases=["d"],
+                                   destination=room,
+                                   report_to=caller)
 
 #CODE
 # Cleanup the Zone

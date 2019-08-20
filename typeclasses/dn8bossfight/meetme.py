@@ -41,7 +41,7 @@ class CmdDisconnectDataLink(Command):
                 self.terminate_bossfight()
                 search.objects("dn8bossfight#march_hare_data_link")[0].delete()
             elif link == search.objects("dn8bossfight#daemon_data_link")[0]:
-                search.channels("Public")[0].msg("|rDaemon Data Link disconnected. March Hare-Daemon connection broken.")
+                search.channels("Public")[0].msg("|rDaemon Data Link disconnected. March Hare-Daemon connection broken. Message Code: B3DD072FD962EAAF3090D66CC46AC708DD819D534AD7062213A9CFCD01FF1DCF")
                 search.objects("dn8bossfight#daemon_data_link")[0].delete()
         else:
             self.caller.msg("%s not found"%self.args)
