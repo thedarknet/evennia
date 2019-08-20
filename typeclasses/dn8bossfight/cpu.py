@@ -66,7 +66,7 @@ class CPUCmdSet(CmdSet):
 class CPU(Object):
     def at_object_creation(self):
         self.db.cryptochip_installed = False
-        self.db.ddos_mitigated = False
+        self.db.ddos_mitigated = True
         self.db.garbage_file_decoded = ""
 
         self.cmdset.add(CPUCmdSet, permanent=True)

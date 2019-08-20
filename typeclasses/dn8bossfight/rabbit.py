@@ -123,7 +123,6 @@ class WhiteRabbitCmdSet(CmdSet):
 
 class CmdRabbitExit(Command):
     key = "fini.obj"
-    auto_help = False
 
     def func(self):
         if self.caller.location.db.coordinates == WhiteRabbit.PATH[0]:
